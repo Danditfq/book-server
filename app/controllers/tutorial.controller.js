@@ -1,6 +1,9 @@
 const db = require("../models");
 const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
+const memjs = require('memjs');
+
+const mc = memjs.Client.create('127.0.0.1:11211');
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
@@ -22,6 +25,13 @@ exports.create = (req, res) => {
   // Save Tutorial in the database
   Tutorial.create(tutorial)
     .then(data => {
+      Tutorial.findAll()
+        .then(isian => {
+          mc.set('data', JSON.stringify(isian))
+        })
+        .catch(errx => {
+          console.log("error")
+        });
       res.send(data);
     })
     .catch(err => {
@@ -37,7 +47,40 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  Tutorial.findAll({ where: condition })
+  if (condition === null){
+    var result = []
+    mc.get('data', function (err, value, key){
+        values = value.toString()
+        values = values.replace('[','')
+        values = values.replace(']','')
+        values = values.split(',{')
+        values[0] = values[0].replace('{','')
+        for (let i = 0; i < values.length; i++) {
+            values[i] = values[i].replace(`"id":`, '')
+            values[i] = values[i].replace(`"title":`, '')
+            values[i] = values[i].replace(`"description":`, '')
+            values[i] = values[i].replace(`"published":`, '')
+            values[i] = values[i].replace(`"createdAt":`, '')
+            values[i] = values[i].replace(`"updatedAt":`, '')
+            values[i] = values[i].replace(`}`,'')
+            values[i] = values[i].replaceAll(`"`,'')
+            valuez = values[i]
+            valuez = valuez.split(',')
+            resultObj = {
+                'id': valuez[0],
+                'title': valuez[1],
+                'description': valuez[2],
+                'published': valuez[3],
+                'createdAt': valuez[4],
+                'updatedAt': valuez[5],
+            }
+            result.push(resultObj)
+        }
+        res.send(result);
+    })
+    console.log("Ambil dari Memcad")
+  }else{
+    Tutorial.findAll({ where: condition })
     .then(data => {
       res.send(data);
     })
@@ -47,6 +90,8 @@ exports.findAll = (req, res) => {
           err.message || "Some error occurred while retrieving tutorials."
       });
     });
+    console.log("Ambil dari DB")
+  }
 };
 
 // Find a single Tutorial with an id
@@ -78,6 +123,13 @@ exports.update = (req, res) => {
     where: { id: id }
   })
     .then(num => {
+      Tutorial.findAll()
+        .then(isian => {
+          mc.set('data', JSON.stringify(isian))
+        })
+        .catch(errx => {
+          console.log("error")
+        });
       if (num == 1) {
         res.send({
           message: "Tutorial was updated successfully."
@@ -103,6 +155,13 @@ exports.delete = (req, res) => {
     where: { id: id }
   })
     .then(num => {
+      Tutorial.findAll()
+        .then(isian => {
+          mc.set('data', JSON.stringify(isian))
+        })
+        .catch(errx => {
+          console.log("error")
+        });
       if (num == 1) {
         res.send({
           message: "Tutorial was deleted successfully!"
@@ -127,6 +186,13 @@ exports.deleteAll = (req, res) => {
     truncate: false
   })
     .then(nums => {
+      Tutorial.findAll()
+        .then(isian => {
+          mc.set('data', JSON.stringify(isian))
+        })
+        .catch(errx => {
+          console.log("error")
+        });
       res.send({ message: `${nums} Tutorials were deleted successfully!` });
     })
     .catch(err => {
