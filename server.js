@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "internal-alb-app-dandi-1122638326.ap-southeast-2.elb.amazonaws.com"
 };
 
 app.use(cors(corsOptions));
