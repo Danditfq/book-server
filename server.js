@@ -3,11 +3,7 @@ const cors = require("cors");
 
 const app = express();
 
-var corsOptions = {
-  origin: "internal-alb-app-dandi-1122638326.ap-southeast-2.elb.amazonaws.com"
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 // parse requests of content-type - application/json
 app.use(express.json());

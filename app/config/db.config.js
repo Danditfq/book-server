@@ -1,5 +1,5 @@
 module.exports = {
-  HOST: "database-dandi.c2kfdi3bqt2u.ap-southeast-2.rds.amazonaws.com",
+  HOST: "dandii-db.c2kfdi3bqt2u.ap-southeast-2.rds.amazonaws.com",
   USER: "dandi",
   PASSWORD: "dandi123",
   DB: "dandi_db",

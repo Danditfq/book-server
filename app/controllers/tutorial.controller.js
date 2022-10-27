@@ -3,7 +3,7 @@ const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 const memjs = require('memjs');
 
-const mc = memjs.Client.create('elasticache-dandi.sonoao.0001.apse2.cache.amazonaws.com:11211');
+const mc = memjs.Client.create('memcached-dandi.sonoao.cfg.apse2.cache.amazonaws.com:11211');
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
